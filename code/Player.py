@@ -1,16 +1,20 @@
 import pygame
+from code.Entity import Entity
+from code.Const import ENTITY_SPEED
 
-class Player:
-    def __init__(self, position):
-        self.surf = pygame.image.load('./asset/gato-1.png').convert_alpha()
-        self.rect = self.surf.get_rect(center=position)
+class Player(Entity):
+    def __init__(self, position: tuple):
+        super().__init__('Player', position)
 
-    def update(self, keys):
-        if keys[pygame.K_LEFT]:
-            self.rect.x -= 5
-        if keys[pygame.K_RIGHT]:
-            self.rect.x += 5
-        if keys[pygame.K_UP]:
-            self.rect.y -= 5
-        if keys[pygame.K_DOWN]:
-            self.rect.y += 5
+    def move(self, keys, window_width):
+        # Atualiza a posição do jogador com base nas teclas pressionadas
+        if keys[pygame.K_LEFT]:  # Movimento para a esquerda
+            self.rect.centerx -= ENTITY_SPEED[self.name]
+        if keys[pygame.K_RIGHT]:  # Movimento para a direita
+            self.rect.centerx += ENTITY_SPEED[self.name]
+
+        # Limitar o movimento para dentro da tela
+        if self.rect.left < 0:  # Limite esquerdo
+            self.rect.left = 0
+        if self.rect.right > window_width:  # Limite direito
+            self.rect.right = window_width

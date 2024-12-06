@@ -1,5 +1,5 @@
 import pygame
-from code.Const import WIN_WIDTH, C_WHITE, MENU_OPTION, C_YELLOW, C_ORANGE, C_BROW
+from code.Const import WIN_WIDTH, C_WHITE, MENU_OPTION, C_YELLOW, C_ORANGE, C_BROW, C_BROW1
 
 
 class Menu:
@@ -26,7 +26,7 @@ class Menu:
                 self.menu_text(20, option, color, (WIN_WIDTH / 2, 210 + 30 * i))
 
             instruction_text = "Use as setas < > do teclado para mover o gato na direção das comidas."
-            self.menu_text(10, instruction_text, C_WHITE, (WIN_WIDTH / 2, 289))
+            self.menu_text(10, instruction_text, C_BROW1, (WIN_WIDTH / 2, 289))
 
             pygame.display.flip()
 
