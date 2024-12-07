@@ -3,18 +3,22 @@ from code.Entity import Entity
 from code.Const import ENTITY_SPEED
 
 class Player(Entity):
-    def __init__(self, position: tuple):
-        super().__init__('Player', position)
+    def __init__(self, position):
+        super().__init__('PLAYER', position)  # Nome do jogador é 'PLAYER'
+  # Inicializa o jogador com uma imagem associada ao nome 'PLAYER'
 
-    def move(self, keys, window_width):
-        # Atualiza a posição do jogador com base nas teclas pressionadas
+    def update(self, keys):
+        """
+        Atualiza a posição do jogador com base nas teclas pressionadas.
+        """
         if keys[pygame.K_LEFT]:  # Movimento para a esquerda
-            self.rect.centerx -= ENTITY_SPEED[self.name]
+            self.rect.x -= ENTITY_SPEED[self.name]
         if keys[pygame.K_RIGHT]:  # Movimento para a direita
-            self.rect.centerx += ENTITY_SPEED[self.name]
+            self.rect.x += ENTITY_SPEED[self.name]
 
-        # Limitar o movimento para dentro da tela
-        if self.rect.left < 0:  # Limite esquerdo
-            self.rect.left = 0
-        if self.rect.right > window_width:  # Limite direito
-            self.rect.right = window_width
+        # Limitar movimento dentro da tela com margem adicional
+        screen_margin = 150
+        if self.rect.left < screen_margin:  # Margem esquerda
+            self.rect.left = screen_margin
+        if self.rect.right > pygame.display.get_surface().get_width() - screen_margin:  # Margem direita
+            self.rect.right = pygame.display.get_surface().get_width() - screen_margin

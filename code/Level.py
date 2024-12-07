@@ -1,5 +1,8 @@
+import random
+
 import pygame
 from code.Background import Background
+from code.Food import Food
 from code.Player import Player
 from code.Const import WIN_WIDTH, WIN_HEIGHT
 from pygame.locals import QUIT, KEYDOWN, K_ESCAPE
@@ -8,9 +11,14 @@ class Level:
     def __init__(self, window):
         self.window = window
         self.background = Background('BACKGROUND', (WIN_WIDTH / 2, WIN_HEIGHT / 2))
-        self.player = Player((WIN_WIDTH / 2, WIN_HEIGHT - 43))  # Posição inicial do jogador
+        self.player = Player((WIN_WIDTH / 2, WIN_HEIGHT - 43))
+        self.foods = []  # Lista para armazenar as comidas
         self.running = True
-        self.paused = False
+        self.paused = False  # Inicializa o estado de pausa como False
+        self.spawn_food_event = pygame.USEREVENT + 1  # Evento para spawnar comidas
+        pygame.time.set_timer(self.spawn_food_event, 1500)  # Intervalo inicial (1,5 segundos)
+
+        pygame.time.set_timer(self.spawn_food_event, 1000)  # Tempo para spawnar comidas (ms)
 
     def run(self):
         # Carrega e toca a música do nível
@@ -32,19 +40,33 @@ class Level:
                 exit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    self.paused = True  # Pausa o jogo
-                    if self.confirm_exit():  # Exibe a caixa de diálogo
-                        self.running = False
-                    self.paused = False  # Retorna ao jogo se não sair
+                    self.paused = not self.paused  # Alterna o estado de pausa
+                    if self.paused:  # Se pausado, confirma a saída
+                        if self.confirm_exit():
+                            self.running = False
+                        else:
+                            self.paused = False  # Cancela a pausa se escolher continuar
+            if event.type == self.spawn_food_event and not self.paused:  # Spawna uma nova comida se não estiver pausado
+                self.spawn_food()
 
     def update(self):
-        keys = pygame.key.get_pressed()  # Obtém o estado das teclas pressionadas
-        self.player.move(keys, WIN_WIDTH)  # Atualiza a posição do jogador com base nas teclas
+        keys = pygame.key.get_pressed()
+        self.player.update(keys)
+
+        # Atualiza a posição das comidas
+        for food in self.foods[:]:
+            food.update()
+            if food.is_out_of_screen(WIN_HEIGHT):  # Remove comidas que saíram da tela
+                self.foods.remove(food)
 
     def render(self):
-        self.window.fill((0, 0, 0))  # Limpa a tela com preto
-        self.window.blit(self.background.surf, self.background.rect)  # Desenha o fundo
-        self.player.draw(self.window)  # Desenha o jogador
+        self.window.fill((0, 0, 0))
+        self.window.blit(self.background.surf, self.background.rect)
+        self.window.blit(self.player.surf, self.player.rect)
+
+        # Desenha as comidas
+        for food in self.foods:
+            self.window.blit(food.surf, food.rect)
 
         # Renderiza a mensagem no canto superior direito
         font = pygame.font.SysFont("Lucida Sans Typewriter", 9)
@@ -52,7 +74,6 @@ class Level:
         self.window.blit(esc_message, (WIN_WIDTH - esc_message.get_width() - 10, 20))
 
         pygame.display.flip()  # Atualiza a tela
-
 
     def confirm_exit(self):
         font = pygame.font.SysFont("Lucida Sans Typewriter", 20)
@@ -76,3 +97,19 @@ class Level:
                         return True
                     if event.key == K_ESCAPE:  # ESC para cancelar
                         return False
+
+    def spawn_food(self):
+        """
+        Cria uma comida em uma posição aleatória na parte superior da tela.
+        """
+        screen_margin = 150  # Margem para não spawnar muito próximo às bordas
+        x_position = random.randint(screen_margin, WIN_WIDTH - screen_margin)
+        food_type = random.choice(['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'V1', 'V2', 'V3', 'V4', 'V5', 'V6'])
+        size = (40, 40)  # Defina o tamanho da comida aqui (largura, altura)
+        food = Food(food_type, (x_position, 0), size)
+        self.foods.append(food)
+
+        # Ajusta o tempo do próximo spawn para espaçamento
+        pygame.time.set_timer(self.spawn_food_event,
+                              random.randint(1000, 2000))  # Intervalo aleatório entre 1 e 2 segundos
+
