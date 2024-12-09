@@ -13,7 +13,7 @@ class Menu:
 
         # Carregar e tocar a música do menu em looping
         pygame.mixer_music.load('./asset/musicamenu.wav')
-        pygame.mixer_music.play(-1)  # -1 significa looping infinito
+        pygame.mixer_music.play(-1)  # looping infinito
 
         while True:
             # Desenha o fundo
@@ -23,7 +23,7 @@ class Menu:
             # Desenha as opções
             for i, option in enumerate(MENU_OPTION):
                 color = C_ORANGE if i != menu_option else C_BROW
-                self.menu_text(20, option, color, (WIN_WIDTH / 2, 210 + 30 * i))
+                self.menu_text(20, option, color, (WIN_WIDTH / 2, 225 + 30 * i))
 
             instruction_text = "Use the arrow keys < > to move the cat in the direction of the food."
             self.menu_text(10, instruction_text, C_BROW1, (WIN_WIDTH / 2, 289))

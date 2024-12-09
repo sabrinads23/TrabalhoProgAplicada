@@ -5,7 +5,7 @@ from pygame import Surface, Rect, KEYDOWN, K_RETURN, K_BACKSPACE, K_ESCAPE
 from pygame.font import Font
 import json
 
-from code.Const import C_ORANGE, C_BROW1, C_BROW  # Certifique-se de que essas constantes estão definidas
+from code.Const import C_ORANGE, C_BROW1, C_BROW
 
 class Score:
     def __init__(self, window: Surface):
@@ -15,15 +15,13 @@ class Score:
         self.score_file = 'scores.json'  # Arquivo onde as pontuações serão salvas
 
     def save(self, score: int, elapsed_time: int):
-        """
-        Salva a pontuação e exibe a tela de entrada do nome do jogador.
-        """
+        #Salva a pontuação e exibe a tela de entrada do nome do jogador.
         pygame.mixer_music.load('./asset/musicamenu.wav')
         pygame.mixer_music.play(-1)
         name = ''
         while True:
-            self.window.blit(self.surf, self.rect)  # Corrigido de 'source' para o uso correto de 'blit'
-            self.display_text(40, 'GAME OVER', C_ORANGE, (self.window.get_width() // 2, 160))  # Alteração para 'display_text'
+            self.window.blit(self.surf, self.rect)
+            self.display_text(40, 'GAME OVER', C_ORANGE, (self.window.get_width() // 2, 160))
             self.display_text(20, f"Your Score: {score}", C_BROW1, (self.window.get_width() // 2, 200))
             self.display_text(20, f"Time Played: {elapsed_time}s", C_BROW1, (self.window.get_width() // 2, 220))
             self.display_text(16, "Enter your name:", C_BROW1, (self.window.get_width() // 2, 260))

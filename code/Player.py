@@ -8,9 +8,7 @@ class Player(Entity):
         # Inicializa o jogador com uma imagem associada ao nome 'PLAYER'
 
     def update(self, keys):
-        """
-        Atualiza a posição do jogador com base nas teclas pressionadas.
-        """
+        #Atualiza a posição do jogador com base nas teclas pressionadas.
         if keys[pygame.K_LEFT]:  # Movimento para a esquerda
             self.rect.x -= ENTITY_SPEED[self.name]
         if keys[pygame.K_RIGHT]:  # Movimento para a direita
@@ -24,8 +22,6 @@ class Player(Entity):
             self.rect.right = pygame.display.get_surface().get_width() - screen_margin
 
     def get_head_rect(self):
-        """
-        Retorna o retângulo correspondente à cabeça do jogador.
-        """
+        #Retorna o retângulo correspondente à cabeça do jogador.
         head_height = self.rect.height // 3  # Define a altura da cabeça como 1/3 da altura total
         return pygame.Rect(self.rect.x, self.rect.y, self.rect.width, head_height)

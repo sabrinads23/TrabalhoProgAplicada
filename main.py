@@ -6,7 +6,7 @@ from code.Const import WIN_WIDTH, WIN_HEIGHT, MENU_OPTION
 def main():
     pygame.init()
     window = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
-    pygame.display.set_caption("FAT CAT")
+    pygame.display.set_caption("FAT-CAT")
     clock = pygame.time.Clock()
 
     # Menu principal
@@ -16,9 +16,6 @@ def main():
         if option == "NEW GAME":
             level = Level(window)
             level.run()
-        elif option == "SCORE":
-            # Implementar lógica para mostrar a pontuação (pode ser adicionado depois)
-            pass
         elif option == "EXIT":
             pygame.quit()
             exit()

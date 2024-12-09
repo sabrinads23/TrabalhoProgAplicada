@@ -5,7 +5,7 @@ from code.Background import Background
 from code.Food import Food
 from code.Player import Player
 from code.Const import WIN_WIDTH, WIN_HEIGHT
-from code.Score import Score  # Import da classe Score
+from code.Score import Score
 from pygame.locals import QUIT, KEYDOWN, K_ESCAPE
 
 class Level:
@@ -30,9 +30,7 @@ class Level:
         self.TEMPO_img = self.load_scaled_asset('./asset/TEMPO.png', (25, 25))
 
     def load_scaled_asset(self, path, size):
-        """
-        Carrega um asset de um caminho e redimensiona para o tamanho especificado.
-        """
+        #Carrega um asset de um caminho e redimensiona para o tamanho especificado.
         asset = pygame.image.load(path)
         return pygame.transform.scale(asset, size)
 
@@ -128,7 +126,7 @@ class Level:
         screen_margin = 180  # Margem para não spawnar muito próximo às bordas
         x_position = random.randint(screen_margin, WIN_WIDTH - screen_margin)
         food_type = random.choice(['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'V1', 'V2', 'V3', 'V4', 'V5', 'V6'])
-        size = (40, 40)  # Defina o tamanho da comida aqui (largura, altura)
+        size = (40, 40)  # Define o tamanho da comida (largura, altura)
         food = Food(food_type, (x_position, 0), size)
         self.foods.append(food)
 
@@ -160,9 +158,7 @@ class Level:
                         return False
 
     def show_final_score(self, elapsed_time):
-        """
-        Exibe o placar final usando a classe Score.
-        """
+        #Exibe o placar final usando a classe Score.
         score_screen = Score(self.window)
         score_screen.save(score=self.score, elapsed_time=elapsed_time)
 

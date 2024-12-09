@@ -9,7 +9,7 @@ class Food:
         self.rect = self.surf.get_rect(topleft=position)
 
     def update(self):
-        self.rect.y += 5  # Velocidade de queda (ajuste conforme necessário)
+        self.rect.y += 5  # Velocidade de queda
 
     def is_out_of_screen(self, screen_height):
         return self.rect.top > screen_height
