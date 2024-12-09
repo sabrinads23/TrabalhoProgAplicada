@@ -1,10 +1,11 @@
 import random
-
+import time
 import pygame
 from code.Background import Background
 from code.Food import Food
 from code.Player import Player
 from code.Const import WIN_WIDTH, WIN_HEIGHT
+from code.Score import Score  # Import da classe Score
 from pygame.locals import QUIT, KEYDOWN, K_ESCAPE
 
 class Level:
@@ -18,7 +19,22 @@ class Level:
         self.spawn_food_event = pygame.USEREVENT + 1  # Evento para spawnar comidas
         pygame.time.set_timer(self.spawn_food_event, 1500)  # Intervalo inicial (1,5 segundos)
 
-        pygame.time.set_timer(self.spawn_food_event, 1000)  # Tempo para spawnar comidas (ms)
+        # Variáveis de controle do jogo
+        self.lives = 7
+        self.score = 0
+        self.start_time = time.time()
+
+        # Ícones redimensionados
+        self.VIDA_img = self.load_scaled_asset('./asset/VIDA.png', (25, 25))
+        self.PONTO_img = self.load_scaled_asset('./asset/PONTO.png', (25, 25))
+        self.TEMPO_img = self.load_scaled_asset('./asset/TEMPO.png', (25, 25))
+
+    def load_scaled_asset(self, path, size):
+        """
+        Carrega um asset de um caminho e redimensiona para o tamanho especificado.
+        """
+        asset = pygame.image.load(path)
+        return pygame.transform.scale(asset, size)
 
     def run(self):
         # Carrega e toca a música do nível
@@ -32,6 +48,10 @@ class Level:
                 self.update()
                 self.render()
             clock.tick(30)
+
+        # Quando o jogo termina, exibe o placar final
+        elapsed_time = int(time.time() - self.start_time)
+        self.show_final_score(elapsed_time)
 
     def handle_events(self):
         for event in pygame.event.get():
@@ -58,6 +78,14 @@ class Level:
             food.update()
             if food.is_out_of_screen(WIN_HEIGHT):  # Remove comidas que saíram da tela
                 self.foods.remove(food)
+            elif food.rect.colliderect(self.player.get_head_rect()):  # Colisão com a cabeça do jogador
+                if food.name.startswith('C'):  # Comida boa
+                    self.score += 10
+                elif food.name.startswith('V'):  # Veneno
+                    self.lives -= 1
+                    if self.lives <= 0:
+                        self.running = False
+                self.foods.remove(food)
 
     def render(self):
         self.window.fill((0, 0, 0))
@@ -70,16 +98,49 @@ class Level:
 
         # Renderiza a mensagem no canto superior direito
         font = pygame.font.SysFont("Lucida Sans Typewriter", 9)
-        esc_message = font.render("ESC para sair do jogo", True, (255, 255, 255))
-        self.window.blit(esc_message, (WIN_WIDTH - esc_message.get_width() - 10, 20))
+        esc_message = font.render("Press ESC to exit ", True, (255, 255, 255))
+        self.window.blit(esc_message, (WIN_WIDTH - esc_message.get_width() - 10, 10))
+
+        # Exibe informações de jogo
+        self.render_ui()
 
         pygame.display.flip()  # Atualiza a tela
 
+    def render_ui(self):
+        font = pygame.font.SysFont("Lucida Sans Typewriter", 20)
+
+        # Desenha corações (vidas)
+        for i in range(self.lives):
+            self.window.blit(self.VIDA_img, (10 + i * 27, 10))
+
+        # Desenha estrela (pontuação)
+        self.window.blit(self.PONTO_img, (10, 40))
+        score_text = font.render(f"{self.score}", True, (255, 255, 255))
+        self.window.blit(score_text, (40, 42))
+
+        # Desenha ampulheta (tempo)
+        self.window.blit(self.TEMPO_img, (10, 75))
+        elapsed_time = int(time.time() - self.start_time)
+        time_text = font.render(f"{elapsed_time}s", True, (255, 255, 255))
+        self.window.blit(time_text, (40, 75))
+
+    def spawn_food(self):  # Cria uma comida em uma posição aleatória na parte superior da tela.
+        screen_margin = 180  # Margem para não spawnar muito próximo às bordas
+        x_position = random.randint(screen_margin, WIN_WIDTH - screen_margin)
+        food_type = random.choice(['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'V1', 'V2', 'V3', 'V4', 'V5', 'V6'])
+        size = (40, 40)  # Defina o tamanho da comida aqui (largura, altura)
+        food = Food(food_type, (x_position, 0), size)
+        self.foods.append(food)
+
+        # Ajusta o tempo do próximo spawn para espaçamento
+        pygame.time.set_timer(self.spawn_food_event,
+                              random.randint(1000, 2000))  # Intervalo aleatório entre 1 e 2 segundos
+
     def confirm_exit(self):
         font = pygame.font.SysFont("Lucida Sans Typewriter", 20)
-        prompt = font.render("Deseja voltar ao menu e perder a pontuação?", True, (255, 255, 255))
-        option_yes = font.render("Sim (ENTER)", True, (0, 255, 0))
-        option_no = font.render("Não (ESC)", True, (255, 0, 0))
+        prompt = font.render("Go back to the menu? Your score will be lost", True, (255, 255, 255))
+        option_yes = font.render("Yes (ENTER)", True, (0, 255, 0))
+        option_no = font.render("No (ESC)", True, (255, 0, 0))
 
         while True:
             self.window.fill((146, 204, 209))
@@ -98,18 +159,10 @@ class Level:
                     if event.key == K_ESCAPE:  # ESC para cancelar
                         return False
 
-    def spawn_food(self):
+    def show_final_score(self, elapsed_time):
         """
-        Cria uma comida em uma posição aleatória na parte superior da tela.
+        Exibe o placar final usando a classe Score.
         """
-        screen_margin = 150  # Margem para não spawnar muito próximo às bordas
-        x_position = random.randint(screen_margin, WIN_WIDTH - screen_margin)
-        food_type = random.choice(['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'V1', 'V2', 'V3', 'V4', 'V5', 'V6'])
-        size = (40, 40)  # Defina o tamanho da comida aqui (largura, altura)
-        food = Food(food_type, (x_position, 0), size)
-        self.foods.append(food)
-
-        # Ajusta o tempo do próximo spawn para espaçamento
-        pygame.time.set_timer(self.spawn_food_event,
-                              random.randint(1000, 2000))  # Intervalo aleatório entre 1 e 2 segundos
+        score_screen = Score(self.window)
+        score_screen.save(score=self.score, elapsed_time=elapsed_time)
 

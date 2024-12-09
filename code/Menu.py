@@ -25,7 +25,7 @@ class Menu:
                 color = C_ORANGE if i != menu_option else C_BROW
                 self.menu_text(20, option, color, (WIN_WIDTH / 2, 210 + 30 * i))
 
-            instruction_text = "Use as setas < > do teclado para mover o gato na direção das comidas."
+            instruction_text = "Use the arrow keys < > to move the cat in the direction of the food."
             self.menu_text(10, instruction_text, C_BROW1, (WIN_WIDTH / 2, 289))
 
             pygame.display.flip()
