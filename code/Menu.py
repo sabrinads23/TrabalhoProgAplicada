@@ -22,7 +22,7 @@ class Menu:
 
             # Desenha as opções
             for i, option in enumerate(MENU_OPTION):
-                color = C_ORANGE if i != menu_option else C_BROW
+                color = C_BROW if i != menu_option else C_ORANGE
                 self.menu_text(20, option, color, (WIN_WIDTH / 2, 225 + 30 * i))
 
             instruction_text = "Use the arrow keys < > to move the cat in the direction of the food."

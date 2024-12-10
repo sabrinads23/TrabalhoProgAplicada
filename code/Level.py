@@ -136,9 +136,9 @@ class Level:
 
     def confirm_exit(self):
         font = pygame.font.SysFont("Lucida Sans Typewriter", 20)
-        prompt = font.render("Go back to the menu? Your score will be lost", True, (255, 255, 255))
-        option_yes = font.render("Yes (ENTER)", True, (0, 255, 0))
-        option_no = font.render("No (ESC)", True, (255, 0, 0))
+        prompt = font.render("EXIT GAME?", True, (255, 255, 255))
+        option_yes = font.render("Yes (ENTER)", True, (255, 255, 255))
+        option_no = font.render("No (ESC)", True, (255, 255, 255))
 
         while True:
             self.window.fill((146, 204, 209))

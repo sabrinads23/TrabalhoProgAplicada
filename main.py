@@ -1,3 +1,5 @@
+import sys
+
 import pygame
 from code.Menu import Menu
 from code.Level import Level
@@ -18,7 +20,7 @@ def main():
             level.run()
         elif option == "EXIT":
             pygame.quit()
-            exit()
+            sys.exit()
         clock.tick(30)
 
 if __name__ == "__main__":
